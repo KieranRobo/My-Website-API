@@ -5,8 +5,8 @@
 
     <groupId>com.kieran</groupId>
     <artifactId>website-api</artifactId>
-    <version>0.0.1-RELEASE</version>
     <packaging>war</packaging>
+    <version>TEST</version>
 
     <name>website-api</name>
     <description>API for My Website</description>
