@@ -1,14 +1,13 @@
 package com.kieran.api;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class Controller {
 
-    @RequestMapping("/")
-    public String home() {
-        return "This is the API home.";
+    @RequestMapping(value = "/test/{name}", method = RequestMethod.GET)
+    public String test(@PathVariable(value="name") String name) {
+        return "Hello there " + name + "!";
     }
 
 }
