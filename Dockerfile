@@ -5,3 +5,5 @@ COPY server.xml /usr/local/tomcat/conf/
 
 WORKDIR /usr/local/tomcat/webapps
 RUN rm -rf -r ROOT
+
+EXPOSE 8080
