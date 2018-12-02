@@ -5,12 +5,9 @@ import com.kieran.api.model.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 public class PagesController {
@@ -19,9 +16,31 @@ public class PagesController {
     private PagesDao dao;
 
     @RequestMapping(value = "/pages/all", method = RequestMethod.GET)
-    public ResponseEntity test() {
+    public ResponseEntity allPages() {
         List<Page> allPages = dao.queryForAllPages();
         return new ResponseEntity<>(allPages, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/pages/details", method = RequestMethod.GET)
+    public ResponseEntity<Page> getPage(@RequestParam("id") int pageId) {
+        Page page = dao.queryForPage(pageId);
+        return new ResponseEntity<>(page, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/pages/new", method = RequestMethod.POST)
+    public ResponseEntity newPage(@RequestParam("name") String pageName,
+                                  @RequestParam("data") String pageData) {
+        if (pageName.isEmpty() || pageData.isEmpty())
+            return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
+
+        dao.insertNewPage(pageName, pageData);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/pages/remove", method = RequestMethod.DELETE)
+    public ResponseEntity removePage(@RequestParam("id") int pageId) {
+        dao.removePage(pageId);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
 
