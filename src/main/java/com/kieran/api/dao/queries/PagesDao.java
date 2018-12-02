@@ -1,5 +1,7 @@
-package com.kieran.api.dao;
+package com.kieran.api.dao.queries;
 
+import com.kieran.api.dao.mappers.PageMapper;
+import com.kieran.api.model.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -16,8 +18,8 @@ public class PagesDao {
     public PagesDao() {
     }
 
-    public List<Map<String, Object>> queryForAllPages() {
+    public List<Page> queryForAllPages() {
         String sql = "SELECT * FROM pages";
-        return jdbcTemplate.queryForList(sql);
+        return jdbcTemplate.query(sql, new PageMapper());
     }
 }
