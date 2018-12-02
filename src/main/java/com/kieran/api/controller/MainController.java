@@ -1,9 +1,9 @@
-package com.kieran.api;
+package com.kieran.api.controller;
 
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-public class Controller {
+public class MainController {
 
     @RequestMapping(value = "/test/{name}", method = RequestMethod.GET)
     public String test(@PathVariable(value="name") String name) {

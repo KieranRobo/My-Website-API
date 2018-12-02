@@ -1,7 +1,0 @@
-<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
-      destroy-method="close">
-    <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-    <property name="url" value="jdbc:postgresql://206.189.30.130:5432/website-api"/>
-    <property name="username" value="[username]"/>
-    <property name="password" value="[password]"/>
-</bean>
