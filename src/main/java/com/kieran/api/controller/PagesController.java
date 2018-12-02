@@ -3,6 +3,7 @@ package com.kieran.api.controller;
 import com.kieran.api.dao.queries.PagesDao;
 import com.kieran.api.model.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,8 +23,13 @@ public class PagesController {
     }
 
     @RequestMapping(value = "/pages/details", method = RequestMethod.GET)
-    public ResponseEntity<Page> getPage(@RequestParam("id") int pageId) {
-        Page page = dao.queryForPage(pageId);
+    public ResponseEntity getPage(@RequestParam("id") int pageId) {
+        Page page = null;
+        try {
+            page = dao.queryForPage(pageId);
+        } catch (EmptyResultDataAccessException ex) {
+            return new ResponseEntity<>(page, HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(page, HttpStatus.OK);
     }
 
