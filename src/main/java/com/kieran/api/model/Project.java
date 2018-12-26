@@ -1,23 +1,47 @@
 package com.kieran.api.model;
 
+import javax.persistence.*;
 import java.sql.Date;
 
+@Entity
+@Table(name = "projects")
 public class Project {
 
-    private int id;
+    @Column(name = "id", nullable = false)
+    private @Id @GeneratedValue int id;
+
+    @Column(name = "date_created", nullable = false)
+    private @GeneratedValue Date dateCreated;
+
+    @Column(name = "last_modified", nullable = false)
+    private @GeneratedValue Date lastModified;
+
+    @Column(name = "display_name", nullable = false)
     private String name;
+
+    @Column(name = "link_name", nullable = false)
     private String symLink;
-    private Date dateCreated;
-    private Date lastModified;
+
+    @Column(name = "display_content", nullable = false)
     private String content;
+
+    public Project(int id, Date dateCreated, Date lastModified, String name, String symLink, String content) {
+        this.id = id;
+        this.dateCreated = dateCreated;
+        this.lastModified = lastModified;
+
+        this.name = name;
+        this.symLink = symLink;
+        this.content = content;
+    }
+
+    public Project() {
+    }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
