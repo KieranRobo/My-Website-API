@@ -41,4 +41,18 @@ public class ProjectController {
             throw new ProjectNotFoundException(projectId);
         projectRepo.removeProject(projectId);
     }
+
+    @PutMapping("/projects/{projectId}")
+    public Project updateProject( @PathVariable int projectId,
+                                 @RequestParam String name) {
+        Project project = projectRepo.queryForProject(projectId);
+        if (project == null)
+            throw new ProjectNotFoundException(projectId);
+
+        if (name != null)
+            projectRepo.updateProjectName(name, projectId);
+
+        // TODO: this seemingly returns the project before the update.
+        return projectRepo.queryForProject(projectId);
+    }
 }
