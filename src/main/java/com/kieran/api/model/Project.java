@@ -1,5 +1,7 @@
 package com.kieran.api.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
 import java.sql.Date;
 
@@ -13,6 +15,7 @@ public class Project {
     @Column(name = "date_created", nullable = false)
     private @GeneratedValue Date dateCreated;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Column(name = "last_modified", nullable = false)
     private @GeneratedValue Date lastModified;
 
