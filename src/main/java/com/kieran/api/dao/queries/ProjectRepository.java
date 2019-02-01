@@ -14,6 +14,7 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     @Query(value = "SELECT * FROM projects", nativeQuery = true)
     List<Project> queryForAllProjects();
 
+    @Transactional
     @Query(value = "SELECT * FROM projects WHERE id = ?", nativeQuery = true)
     Project queryForProject(@Param("projectId") int projectId);
 

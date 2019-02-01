@@ -7,6 +7,8 @@ import com.kieran.api.model.Project;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @RestController
@@ -14,6 +16,9 @@ public class ProjectController {
 
     @Resource
     private ProjectRepository projectRepo;
+
+    @PersistenceContext
+    private EntityManager em;
 
     @GetMapping("/projects")
     public List<Project> allProjects() {
@@ -43,15 +48,15 @@ public class ProjectController {
     }
 
     @PutMapping("/projects/{projectId}")
-    public Project updateProject( @PathVariable int projectId,
-                                 @RequestParam String name) {
-        Project project = projectRepo.queryForProject(projectId);
-        if (project == null)
+    public Project updateProject( @PathVariable int projectId, Project newProject) {
+        Project oldProject = projectRepo.queryForProject(projectId);
+        if (oldProject == null)
             throw new ProjectNotFoundException(projectId);
 
-        if (name != null)
-            projectRepo.updateProjectName(name, projectId);
+        if (newProject.getName() != null)
+            projectRepo.updateProjectName(newProject.getName(), projectId);
 
+        em.clear();
         // TODO: this seemingly returns the project before the update.
         return projectRepo.queryForProject(projectId);
     }
