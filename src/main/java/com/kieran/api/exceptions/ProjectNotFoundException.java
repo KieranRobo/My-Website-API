@@ -9,4 +9,8 @@ public class ProjectNotFoundException extends RuntimeException {
     public ProjectNotFoundException(int projectId) {
         super("Project with ID of '" + projectId + "' could not be found.");
     }
+
+    public ProjectNotFoundException(String projectLink) {
+        super("Project with link name of '" + projectLink + "' could not be found.");
+    }
 }
