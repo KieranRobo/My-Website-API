@@ -47,7 +47,7 @@ public class ProjectController {
     }
 
     @PutMapping("/projects/{projectId}")
-    public Project updateProject( @PathVariable int projectId, Project newProject) {
+    public Project updateProject( @PathVariable int projectId, @RequestBody Project newProject) {
         Project oldProject = projectRepo.queryForProject(projectId);
         if (oldProject == null)
             throw new ProjectNotFoundException(projectId);
