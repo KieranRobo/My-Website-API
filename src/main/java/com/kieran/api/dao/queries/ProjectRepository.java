@@ -18,7 +18,10 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     List<Project> queryForAllProjects();
 
     @Query(value = "SELECT * FROM projects WHERE id = :projectId", nativeQuery = true)
-    Project queryForProject(@Param("projectId") int projectId);
+    Project queryForProjectById(@Param("projectId") int projectId);
+
+    @Query(value = "SELECT * FROM projects WHERE link_name = :projectLink", nativeQuery = true)
+    Project queryForProjectByLink(@Param("projectLink") String projectLink);
 
     @Query(value = "INSERT INTO projects (display_name, link_name, date_created, last_modified, display_content) VALUES (:displayName, :linkName, now(), now(), :displayContent) RETURNING id", nativeQuery = true)
     int insertNewProject(@Param("displayName") String displayName, @Param("linkName") String linkName, @Param("displayContent") String displayContent);

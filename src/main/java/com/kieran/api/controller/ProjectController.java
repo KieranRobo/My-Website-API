@@ -24,23 +24,35 @@ public class ProjectController {
         return projectRepo.queryForAllProjects();
     }
 
-    @GetMapping("/projects/{projectId}")
-    public Project getProject(@PathVariable int projectId) throws ProjectNotFoundException {
-        Project project = projectRepo.queryForProject(projectId);
+    /**
+     * @param projectIdentifier: Can either be the ID or link name of a project
+     * @return: The Project if it exists (200)
+     * @throws ProjectNotFoundException: If the project doesn't exist (404)
+     */
+    @GetMapping("/projects/{projectIdentifier}")
+    public Project getProject(@PathVariable String projectIdentifier) throws ProjectNotFoundException {
+        Project project;
+        try {
+            project = projectRepo.queryForProjectById(Integer.parseInt(projectIdentifier));
+        } catch (NumberFormatException ex) {
+            // The input therefore must be a link name
+            project = projectRepo.queryForProjectByLink(projectIdentifier);
+        }
         if (project == null)
-            throw new ProjectNotFoundException(projectId);
+            throw new ProjectNotFoundException(projectIdentifier);
+
         return project;
     }
 
     @PostMapping("/projects")
     public Project newProject(@RequestBody Project project) {
         int newProjectId = projectRepo.insertNewProject(project.getName(), project.getSymLink(), project.getContent());
-        return projectRepo.queryForProject(newProjectId);
+        return projectRepo.queryForProjectById(newProjectId);
     }
 
     @DeleteMapping("/projects/{projectId}")
     public void removeProject(@PathVariable int projectId) {
-        Project project = projectRepo.queryForProject(projectId);
+        Project project = projectRepo.queryForProjectById(projectId);
         if (project == null)
             throw new ProjectNotFoundException(projectId);
         projectRepo.removeProject(projectId);
@@ -48,7 +60,7 @@ public class ProjectController {
 
     @PutMapping("/projects/{projectId}")
     public Project updateProject( @PathVariable int projectId, @RequestBody Project newProject) {
-        Project oldProject = projectRepo.queryForProject(projectId);
+        Project oldProject = projectRepo.queryForProjectById(projectId);
         if (oldProject == null)
             throw new ProjectNotFoundException(projectId);
 
@@ -60,6 +72,6 @@ public class ProjectController {
             projectRepo.updateProjectContent(projectId, newProject.getContent());
 
         em.clear();
-        return projectRepo.queryForProject(projectId);
+        return projectRepo.queryForProjectById(projectId);
     }
 }
