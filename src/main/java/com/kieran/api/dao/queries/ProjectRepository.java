@@ -20,8 +20,8 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     @Query(value = "SELECT * FROM projects WHERE link_name = :projectLink", nativeQuery = true)
     Project queryForProjectByLink(@Param("projectLink") String projectLink);
 
-    @Query(value = "INSERT INTO projects (display_name, link_name, date_created, last_modified, display_content) VALUES (:displayName, :linkName, now(), now(), :displayContent) RETURNING id", nativeQuery = true)
-    int insertNewProject(@Param("displayName") String displayName, @Param("linkName") String linkName, @Param("displayContent") String displayContent);
+    @Query(value = "INSERT INTO projects (display_name, link_name, display_image, date_created, last_modified, display_content) VALUES (:displayName, :linkName, :displayImage, now(), now(), :displayContent) RETURNING id", nativeQuery = true)
+    int insertNewProject(@Param("displayName") String displayName, @Param("linkName") String linkName, @Param("displayImage") String displayImage, @Param("displayContent") String displayContent);
 
     @Transactional
     @Modifying
@@ -42,5 +42,10 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     @Modifying
     @Query(value = "UPDATE projects SET display_content = :newContent, last_modified = now() WHERE id = :projectId", nativeQuery = true)
     void updateProjectContent(@Param("projectId") int projectId, @Param("newContent") String content);
+
+    @Transactional
+    @Modifying
+    @Query(value = "UPDATE projects SET display_image = :newImage, last_modified = now() WHERE id = :projectId", nativeQuery = true)
+    void updateProjectImage(@Param("projectId") int projectId, @Param("newImage") String displayImage);
 
 }

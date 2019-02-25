@@ -46,7 +46,7 @@ public class ProjectController {
 
     @PostMapping("/projects")
     public Project newProject(@RequestBody Project project) {
-        int newProjectId = projectRepo.insertNewProject(project.getName(), project.getSymLink(), project.getContent());
+        int newProjectId = projectRepo.insertNewProject(project.getName(), project.getSymLink(), project.getDisplayImage(), project.getContent());
         return projectRepo.queryForProjectById(newProjectId);
     }
 
@@ -70,6 +70,8 @@ public class ProjectController {
             projectRepo.updateProjectLinkName(projectId, newProject.getSymLink());
         if (newProject.getContent() != null)
             projectRepo.updateProjectContent(projectId, newProject.getContent());
+        if (newProject.getDisplayImage() != null)
+            projectRepo.updateProjectImage(projectId, newProject.getDisplayImage());
 
         em.clear();
         return projectRepo.queryForProjectById(projectId);

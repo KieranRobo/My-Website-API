@@ -28,7 +28,10 @@ public class Project {
     @Column(name = "display_content", nullable = false)
     private String content;
 
-    public Project(int id, Date dateCreated, Date lastModified, String name, String symLink, String content) {
+    @Column(name = "display_image", nullable = false)
+    private String displayImage;
+
+    public Project(int id, Date dateCreated, Date lastModified, String name, String symLink, String content, String displayImage) {
         this.id = id;
         this.dateCreated = dateCreated;
         this.lastModified = lastModified;
@@ -36,6 +39,7 @@ public class Project {
         this.name = name;
         this.symLink = symLink;
         this.content = content;
+        this.displayImage = displayImage;
     }
 
     public Project() {
@@ -84,5 +88,13 @@ public class Project {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getDisplayImage() {
+        return displayImage;
+    }
+
+    public void setDisplayImage(String display_image) {
+        this.displayImage = display_image;
     }
 }
