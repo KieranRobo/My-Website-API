@@ -1,23 +1,54 @@
 package com.kieran.api.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import javax.persistence.*;
 import java.sql.Date;
 
+@Entity
+@Table(name = "projects")
 public class Project {
 
-    private int id;
+    @Column(name = "id", nullable = false)
+    private @Id @GeneratedValue int id;
+
+    @Column(name = "date_created", nullable = false)
+    private @GeneratedValue Date dateCreated;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Column(name = "last_modified", nullable = false)
+    private @GeneratedValue Date lastModified;
+
+    @Column(name = "display_name", nullable = false)
     private String name;
+
+    @Column(name = "link_name", nullable = false)
     private String symLink;
-    private Date dateCreated;
-    private Date lastModified;
+
+    @Column(name = "display_content", nullable = false)
     private String content;
+
+    @Column(name = "display_image", nullable = false)
+    private String displayImage;
+
+    public Project(int id, Date dateCreated, Date lastModified, String name, String symLink, String content, String displayImage) {
+        this.id = id;
+        this.dateCreated = dateCreated;
+        this.lastModified = lastModified;
+
+        this.name = name;
+        this.symLink = symLink;
+        this.content = content;
+        this.displayImage = displayImage;
+    }
+
+    public Project() {
+    }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
     public String getName() {
         return name;
@@ -57,5 +88,13 @@ public class Project {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getDisplayImage() {
+        return displayImage;
+    }
+
+    public void setDisplayImage(String display_image) {
+        this.displayImage = display_image;
     }
 }

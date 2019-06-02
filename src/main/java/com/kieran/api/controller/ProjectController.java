@@ -1,55 +1,79 @@
 package com.kieran.api.controller;
 
-import com.kieran.api.dao.queries.ProjectDao;
+import com.kieran.api.dao.queries.ProjectRepository;
+import com.kieran.api.exceptions.ProjectNotFoundException;
 import com.kieran.api.model.Project;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @RestController
 public class ProjectController {
 
-    @Autowired
-    private ProjectDao dao;
+    @Resource
+    private ProjectRepository projectRepo;
 
-    @RequestMapping(value = "/project/all", method = RequestMethod.GET)
-    public ResponseEntity allProjects() {
-        List<Project> allPages = dao.queryForAllProjects();
-        return new ResponseEntity<>(allPages, HttpStatus.OK);
+    @PersistenceContext
+    private EntityManager em;
+
+    @GetMapping("/projects")
+    public List<Project> allProjects() {
+        return projectRepo.queryForAllProjects();
     }
 
-    @RequestMapping(value = "/project/details", method = RequestMethod.GET)
-    public ResponseEntity getProject(@RequestParam("id") int projectId) {
-        Project project = null;
+    /**
+     * @param projectIdentifier: Can either be the ID or link name of a project
+     * @return: The Project if it exists (200)
+     * @throws ProjectNotFoundException: If the project doesn't exist (404)
+     */
+    @GetMapping("/projects/{projectIdentifier}")
+    public Project getProject(@PathVariable String projectIdentifier) throws ProjectNotFoundException {
+        Project project;
         try {
-            project = dao.queryForProject(projectId);
-        } catch (EmptyResultDataAccessException ex) {
-            return new ResponseEntity<>(project, HttpStatus.NOT_FOUND);
+            project = projectRepo.queryForProjectById(Integer.parseInt(projectIdentifier));
+        } catch (NumberFormatException ex) {
+            // The input therefore must be a link name
+            project = projectRepo.queryForProjectByLink(projectIdentifier);
         }
-        return new ResponseEntity<>(project, HttpStatus.OK);
+        if (project == null)
+            throw new ProjectNotFoundException(projectIdentifier);
+
+        return project;
     }
 
-    @RequestMapping(value = "/project/new", method = RequestMethod.POST)
-    public ResponseEntity newProject(@RequestParam("display_name") String displayName,
-                                  @RequestParam("link_name") String linkName,
-                                  @RequestParam("display_content") String displayContent) {
-        if (displayName.isEmpty() || linkName.isEmpty() || displayContent.isEmpty())
-            return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
-
-        dao.insertNewProject(displayName, linkName, displayContent);
-        return new ResponseEntity(HttpStatus.OK);
+    @PostMapping("/projects")
+    public Project newProject(@RequestBody Project project) {
+        int newProjectId = projectRepo.insertNewProject(project.getName(), project.getSymLink(), project.getDisplayImage(), project.getContent());
+        return projectRepo.queryForProjectById(newProjectId);
     }
 
-    @RequestMapping(value = "/project/remove", method = RequestMethod.DELETE)
-    public ResponseEntity removeProject(@RequestParam("id") int projectId) {
-        dao.removeProject(projectId);
-        return new ResponseEntity(HttpStatus.OK);
+    @DeleteMapping("/projects/{projectId}")
+    public void removeProject(@PathVariable int projectId) {
+        Project project = projectRepo.queryForProjectById(projectId);
+        if (project == null)
+            throw new ProjectNotFoundException(projectId);
+        projectRepo.removeProject(projectId);
+    }
+
+    @PutMapping("/projects/{projectId}")
+    public Project updateProject( @PathVariable int projectId, @RequestBody Project newProject) {
+        Project oldProject = projectRepo.queryForProjectById(projectId);
+        if (oldProject == null)
+            throw new ProjectNotFoundException(projectId);
+
+        if (newProject.getName() != null)
+            projectRepo.updateProjectName(projectId, newProject.getName());
+        if (newProject.getSymLink() != null)
+            projectRepo.updateProjectLinkName(projectId, newProject.getSymLink());
+        if (newProject.getContent() != null)
+            projectRepo.updateProjectContent(projectId, newProject.getContent());
+        if (newProject.getDisplayImage() != null)
+            projectRepo.updateProjectImage(projectId, newProject.getDisplayImage());
+
+        em.clear();
+        return projectRepo.queryForProjectById(projectId);
     }
 }
